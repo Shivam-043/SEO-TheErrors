@@ -1,0 +1,1159 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Client Portal - Digital SEO Services</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&display=swap');
+        
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: #FFF7ED; /* Orange-50 */
+            color: #431407; /* Brown-950 */
+        }
+
+        /* Chart Container Styling */
+        .chart-container {
+            position: relative;
+            width: 100%;
+            max-width: 800px;
+            height: 300px;
+            max-height: 400px;
+            margin-left: auto;
+            margin-right: auto;
+        }
+        
+        @media (min-width: 768px) {
+            .chart-container {
+                height: 350px;
+            }
+        }
+
+        .nav-item.active {
+            background-color: #C2410C; /* Orange-700 */
+            color: white;
+        }
+
+        .stat-card {
+            transition: transform 0.2s ease-in-out;
+        }
+        .stat-card:hover {
+            transform: translateY(-5px);
+        }
+
+        /* --- Geo Grid Specific Styles --- */
+        .geo-map-container {
+            position: relative;
+            width: 100%;
+            max-width: 600px;
+            aspect-ratio: 1/1;
+            margin: 0 auto;
+            border-radius: 12px;
+            overflow: hidden;
+            box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
+            background-color: #e5e7eb;
+            /* Authentic Map Background */
+            background-image: url('https://upload.wikimedia.org/wikipedia/commons/thumb/b/b6/Gilbert_Street_map.png/800px-Gilbert_Street_map.png'); 
+            background-size: cover;
+            background-position: center;
+            border: 1px solid #d1d5db;
+        }
+
+        .geo-grid {
+            display: grid;
+            grid-template-columns: repeat(5, 1fr);
+            grid-template-rows: repeat(5, 1fr);
+            width: 100%;
+            height: 100%;
+            padding: 24px;
+            background-color: rgba(255, 255, 255, 0.15);
+        }
+
+        .geo-point-wrapper {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            position: relative;
+        }
+
+        .geo-point {
+            width: 32px;
+            height: 32px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 800;
+            font-size: 14px;
+            color: white;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.4);
+            cursor: pointer;
+            transition: transform 0.2s cubic-bezier(0.34, 1.56, 0.64, 1);
+            border: 2px solid white;
+            z-index: 10;
+            text-shadow: 0px 1px 2px rgba(0,0,0,0.5);
+        }
+
+        .geo-point:hover {
+            transform: scale(1.4) translateY(-5px);
+            z-index: 20;
+            border-color: #fef08a;
+        }
+
+        .geo-point.center-point {
+            width: 40px;
+            height: 40px;
+            font-size: 18px;
+            border: 3px solid #1f2937;
+            background: linear-gradient(135deg, #fbbf24, #d97706);
+            z-index: 15;
+        }
+
+        .geo-tooltip {
+            position: absolute;
+            bottom: 45px;
+            left: 50%;
+            transform: translateX(-50%);
+            background: white;
+            color: #374151;
+            padding: 8px 12px;
+            border-radius: 8px;
+            font-size: 12px;
+            box-shadow: 0 10px 15px -3px rgba(0,0,0,0.2);
+            width: 150px;
+            text-align: center;
+            opacity: 0;
+            visibility: hidden;
+            transition: opacity 0.2s;
+            pointer-events: none;
+            z-index: 30;
+            border: 1px solid #e5e7eb;
+            font-weight: 600;
+        }
+
+        .geo-point-wrapper:hover .geo-tooltip {
+            opacity: 1;
+            visibility: visible;
+        }
+
+        .geo-tooltip::after {
+            content: "";
+            position: absolute;
+            top: 100%;
+            left: 50%;
+            margin-left: -5px;
+            border-width: 5px;
+            border-style: solid;
+            border-color: white transparent transparent transparent;
+        }
+
+        .legend-dot { width: 12px; height: 12px; border-radius: 50%; display: inline-block; margin-right: 4px; }
+
+        /* Login Animation */
+        @keyframes fadeOut {
+            from { opacity: 1; }
+            to { opacity: 0; }
+        }
+        .fade-out {
+            animation: fadeOut 0.5s forwards;
+        }
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        .animate-fade-in {
+            animation: fadeIn 0.8s ease-out forwards;
+        }
+    </style>
+</head>
+<body class="bg-gray-50 text-gray-800 font-sans min-h-screen">
+
+    <!-- =========================
+         PAGE 1: LOGIN PORTAL 
+         ========================= -->
+    <div id="login-container" class="flex items-center justify-center min-h-screen bg-gradient-to-br from-orange-50 to-orange-100 p-4">
+        <div class="bg-white rounded-2xl shadow-xl w-full max-w-md overflow-hidden border border-gray-100">
+            <!-- Header -->
+            <div class="bg-orange-600 p-8 text-center">
+                <div class="mx-auto bg-white w-16 h-16 rounded-full flex items-center justify-center mb-4 shadow-lg">
+                     <!-- SEO Agency Icon -->
+                    <span class="text-3xl">🚀</span>
+                </div>
+                <h1 class="text-2xl font-bold text-white tracking-wide">Digital SEO Services</h1>
+                <p class="text-orange-100 text-sm mt-1">Client Reporting Portal</p>
+            </div>
+
+            <!-- Form -->
+            <div class="p-8">
+                <div class="text-center mb-6">
+                    <h2 class="text-lg font-semibold text-gray-700">Access Your Annual Report</h2>
+                    <p class="text-xs text-gray-500 mt-1">Secure login for Boss Drive In Management</p>
+                </div>
+
+                <form id="loginForm" class="space-y-4" onsubmit="handleLogin(event)">
+                    <div>
+                        <label class="block text-xs font-bold text-gray-500 uppercase mb-1">Username</label>
+                        <input type="text" id="username" class="w-full px-4 py-3 rounded-lg border border-gray-300 focus:outline-none focus:ring-2 focus:ring-orange-500 focus:border-transparent transition" placeholder="Enter username (admin)" required>
+                    </div>
+                    <div>
+                        <label class="block text-xs font-bold text-gray-500 uppercase mb-1">Password</label>
+                        <input type="password" id="password" class="w-full px-4 py-3 rounded-lg border border-gray-300 focus:outline-none focus:ring-2 focus:ring-orange-500 focus:border-transparent transition" placeholder="Enter password (boss)" required>
+                    </div>
+                    
+                    <div id="loginError" class="hidden text-red-500 text-xs text-center font-bold bg-red-50 p-2 rounded">
+                        Invalid credentials. Try admin / boss
+                    </div>
+
+                    <button type="submit" class="w-full bg-orange-600 hover:bg-orange-700 text-white font-bold py-3 rounded-lg shadow-md transition transform hover:scale-[1.02] active:scale-95 flex justify-center items-center gap-2">
+                        <span>Access Dashboard</span>
+                        <span class="text-lg">➔</span>
+                    </button>
+                </form>
+
+                <div class="mt-6 text-center">
+                    <p class="text-xs text-gray-400">Restricted Access • Encrypted Connection</p>
+                </div>
+            </div>
+            
+            <!-- Loading Overlay (Hidden initially) -->
+            <div id="loadingOverlay" class="hidden absolute inset-0 bg-white bg-opacity-95 flex flex-col items-center justify-center z-50">
+                <div class="w-12 h-12 border-4 border-orange-200 border-t-orange-600 rounded-full animate-spin mb-4"></div>
+                <p id="loadingText" class="text-sm font-bold text-gray-600">Authenticating...</p>
+            </div>
+        </div>
+    </div>
+
+
+    <!-- =========================
+         PAGE 2: DASHBOARD (Hidden) 
+         ========================= -->
+    <div id="dashboard-container" class="hidden flex-col min-h-screen bg-orange-50">
+        <!-- Navigation -->
+        <nav class="bg-white shadow-md sticky top-0 z-50">
+            <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+                <div class="flex justify-between h-20"> 
+                    <div class="flex items-center">
+                        <!-- Business Logo -->
+                        <div class="h-12 w-12 mr-3 flex items-center justify-center overflow-hidden rounded-md bg-white border border-orange-100">
+                            <!-- Using provided file image_2281a3.png -->
+                            <img src="image_2281a3.png" onerror="this.src='https://cdn-icons-png.flaticon.com/512/3075/3075977.png'" alt="Boss Drive In Logo" class="h-full w-full object-contain">
+                        </div>
+                        <div>
+                            <span class="block font-extrabold text-xl text-orange-900 leading-tight">Boss Drive In</span>
+                            <span class="block text-xs text-orange-600 font-medium tracking-wide">SEO PERFORMANCE REPORT</span>
+                        </div>
+                    </div>
+                    <div class="hidden md:flex items-center space-x-4" id="desktop-nav">
+                        <!-- Nav generated by JS -->
+                    </div>
+                    <div class="md:hidden flex items-center">
+                        <button id="mobile-menu-btn" class="text-orange-800 text-2xl focus:outline-none">☰</button>
+                    </div>
+                </div>
+            </div>
+            <!-- Mobile Menu -->
+            <div id="mobile-menu" class="hidden md:hidden bg-orange-50 border-t border-orange-100 p-4">
+                <!-- Mobile nav items generated by JS -->
+            </div>
+        </nav>
+
+        <!-- Main Content Area -->
+        <main class="flex-grow max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 w-full">
+            
+            <!-- View: Executive Summary -->
+            <section id="view-summary" class="view-section animate-fade-in block">
+                <div class="text-center mb-12">
+                    <h1 class="text-4xl font-extrabold text-orange-900 mb-4">Annual SEO Review: Year 1</h1>
+                    <p class="text-lg text-orange-700 max-w-3xl mx-auto">
+                        An in-depth analysis of <span class="font-bold">Boss Drive In's</span> digital growth, focusing on local dominance in Washington, organic traffic acquisition, and customer conversions.
+                    </p>
+                </div>
+
+                <!-- KPI Cards -->
+                <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-12">
+                    <div class="stat-card bg-white p-6 rounded-xl shadow-sm border-l-4 border-green-500">
+                        <div class="flex justify-between items-start">
+                            <div>
+                                <p class="text-sm font-medium text-gray-500">Total Organic Visits</p>
+                                <h3 class="text-3xl font-bold text-gray-800 mt-1">14,502</h3>
+                            </div>
+                            <span class="text-2xl">📈</span>
+                        </div>
+                        <p class="mt-4 text-sm text-green-600 font-semibold">▲ 145% YoY Growth</p>
+                    </div>
+
+                    <div class="stat-card bg-white p-6 rounded-xl shadow-sm border-l-4 border-orange-500">
+                        <div class="flex justify-between items-start">
+                            <div>
+                                <p class="text-sm font-medium text-gray-500">Direction Requests</p>
+                                <h3 class="text-3xl font-bold text-gray-800 mt-1">3,240</h3>
+                            </div>
+                            <span class="text-2xl">📍</span>
+                        </div>
+                        <p class="mt-4 text-sm text-green-600 font-semibold">▲ 82% vs Previous Year</p>
+                    </div>
+
+                    <div class="stat-card bg-white p-6 rounded-xl shadow-sm border-l-4 border-blue-500">
+                        <div class="flex justify-between items-start">
+                            <div>
+                                <p class="text-sm font-medium text-gray-500">Phone Calls (GBP)</p>
+                                <h3 class="text-3xl font-bold text-gray-800 mt-1">1,892</h3>
+                            </div>
+                            <span class="text-2xl">📞</span>
+                        </div>
+                        <p class="mt-4 text-sm text-green-600 font-semibold">▲ 65% vs Previous Year</p>
+                    </div>
+
+                    <div class="stat-card bg-white p-6 rounded-xl shadow-sm border-l-4 border-purple-500">
+                        <div class="flex justify-between items-start">
+                            <div>
+                                <p class="text-sm font-medium text-gray-500">Keywords in Top 10</p>
+                                <h3 class="text-3xl font-bold text-gray-800 mt-1">42</h3>
+                            </div>
+                            <span class="text-2xl">🏆</span>
+                        </div>
+                        <p class="mt-4 text-sm text-green-600 font-semibold">+28 New Top Rankings</p>
+                    </div>
+                </div>
+
+                <!-- Main Trend Chart -->
+                <div class="bg-white p-6 rounded-xl shadow-sm mb-12">
+                    <h2 class="text-xl font-bold text-gray-800 mb-2">Organic Traffic Growth Journey</h2>
+                    <p class="text-sm text-gray-500 mb-6">Visualizing the steady climb in monthly visitors from search engines over the last 12 months.</p>
+                    <div class="chart-container">
+                        <canvas id="trafficChart"></canvas>
+                    </div>
+                </div>
+            </section>
+
+            <!-- View: Local SEO (GMB) -->
+            <section id="view-local" class="view-section hidden animate-fade-in">
+                <div class="mb-8">
+                    <h2 class="text-3xl font-bold text-orange-900 mb-2">Local SEO & Google Business Profile</h2>
+                    <p class="text-gray-700">For a local restaurant, this is the most critical area. We track how many customers found you on Maps and the actual actions they took (calling, driving).</p>
+                </div>
+
+                <!-- Interactive Map Coordinate Ranking Section -->
+                <div class="bg-white p-6 rounded-xl shadow-sm mb-8 border-l-4 border-orange-600">
+                    <div class="grid grid-cols-1 lg:grid-cols-3 gap-8 items-start">
+                        
+                        <!-- Controls Column -->
+                        <div class="col-span-1">
+                            <div class="sticky top-24">
+                                <h3 class="text-2xl font-bold text-gray-800 mb-2">Geo-Grid Rankings</h3>
+                                <p class="text-gray-600 text-sm mb-6">
+                                    Rankings fluctuate based on customer location. This map shows your ranking dominance every 1 mile around Boss Drive In.
+                                </p>
+                                
+                                <div class="mb-6">
+                                    <label class="block text-xs font-bold text-gray-500 uppercase mb-3 tracking-wider">Select Keyword</label>
+                                    <div class="flex flex-col gap-2">
+                                        <button class="geo-btn active text-left px-4 py-3 rounded-lg bg-orange-600 text-white text-sm font-medium shadow-sm transition-all hover:bg-orange-700 flex justify-between items-center" onclick="updateGeoGrid('burgers')">
+                                            <span>"Best Burgers"</span>
+                                            <span class="bg-white text-orange-600 text-xs px-2 py-0.5 rounded-full font-bold">Avg #3</span>
+                                        </button>
+                                        <button class="geo-btn text-left px-4 py-3 rounded-lg bg-gray-50 text-gray-600 text-sm font-medium shadow-sm transition-all hover:bg-gray-100 flex justify-between items-center" onclick="updateGeoGrid('lunch')">
+                                            <span>"Lunch Spot"</span>
+                                            <span class="bg-gray-200 text-gray-500 text-xs px-2 py-0.5 rounded-full font-bold">Avg #5</span>
+                                        </button>
+                                        <button class="geo-btn text-left px-4 py-3 rounded-lg bg-gray-50 text-gray-600 text-sm font-medium shadow-sm transition-all hover:bg-gray-100 flex justify-between items-center" onclick="updateGeoGrid('takeout')">
+                                            <span>"Takeout"</span>
+                                            <span class="bg-gray-200 text-gray-500 text-xs px-2 py-0.5 rounded-full font-bold">Avg #1</span>
+                                        </button>
+                                    </div>
+                                </div>
+
+                                <div class="bg-gray-50 p-4 rounded-lg border border-gray-100">
+                                    <h4 class="font-bold text-xs text-gray-500 uppercase mb-3">Ranking Legend</h4>
+                                    <div class="space-y-2 text-sm text-gray-700">
+                                        <div class="flex items-center"><span class="legend-dot bg-green-500"></span> 1 - 3 (Dominant)</div>
+                                        <div class="flex items-center"><span class="legend-dot bg-yellow-400"></span> 4 - 10 (Visible)</div>
+                                        <div class="flex items-center"><span class="legend-dot bg-red-400"></span> 10+ (Opportunity)</div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Map Visual Column -->
+                        <div class="col-span-1 lg:col-span-2">
+                            <div class="geo-map-container">
+                                <!-- Overlay Label -->
+                                <div class="absolute top-3 right-3 bg-white/90 backdrop-blur-sm px-3 py-1.5 rounded-md text-xs font-bold text-gray-600 border border-gray-200 shadow-sm z-20">
+                                    Grid Radius: 5.0 mi
+                                </div>
+                                
+                                <!-- The Grid -->
+                                <div id="geoGridContainer" class="geo-grid">
+                                    <!-- JS Injects grid points here -->
+                                </div>
+                            </div>
+                            <p class="text-center text-xs text-gray-400 mt-2">Hover over points to see exact location and ranking data.</p>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="grid grid-cols-1 lg:grid-cols-2 gap-8 mb-8">
+                    <div class="bg-white p-6 rounded-xl shadow-sm">
+                        <h3 class="text-lg font-bold text-gray-800 mb-4">Customer Actions Breakdown</h3>
+                        <div class="chart-container">
+                            <canvas id="localActionsChart"></canvas>
+                        </div>
+                    </div>
+                    <div class="bg-white p-6 rounded-xl shadow-sm">
+                        <h3 class="text-lg font-bold text-gray-800 mb-4">Discovery vs. Direct Search</h3>
+                        <p class="text-sm text-gray-600 mb-4">"Discovery" means they found you looking for generic terms like "Burger near me". "Direct" means they typed your name.</p>
+                        <div class="chart-container">
+                            <canvas id="discoveryChart"></canvas>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Review Highlight Snippet -->
+                <div class="bg-orange-100 border border-orange-200 rounded-xl p-6">
+                    <h3 class="font-bold text-orange-900 mb-4">Reputation Management Impact</h3>
+                    <div class="grid grid-cols-1 md:grid-cols-3 gap-4 text-center">
+                        <div>
+                            <div class="text-3xl font-bold text-orange-600">4.8</div>
+                            <div class="text-sm text-orange-800">Average Rating</div>
+                        </div>
+                        <div>
+                            <div class="text-3xl font-bold text-orange-600">+124</div>
+                            <div class="text-sm text-orange-800">New Reviews</div>
+                        </div>
+                        <div>
+                            <div class="text-3xl font-bold text-orange-600">100%</div>
+                            <div class="text-sm text-orange-800">Response Rate</div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- View: Conversions & Clicks -->
+            <section id="view-conversions" class="view-section hidden animate-fade-in">
+                <div class="mb-8">
+                    <h2 class="text-3xl font-bold text-orange-900 mb-2">Acquisition & Conversion Intelligence</h2>
+                    <p class="text-gray-700">Detailed analysis of traffic volume (Clicks) and how effectively we are turning those visitors into customers (Conversion Rate).</p>
+                </div>
+
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-8">
+                    <div class="p-6 bg-white rounded-xl shadow-sm border-l-4 border-orange-500">
+                        <h3 class="text-gray-500 text-sm font-semibold uppercase tracking-wider">Total Annual Clicks</h3>
+                        <div class="mt-2 flex items-baseline">
+                            <span class="text-4xl font-extrabold text-gray-900">42,590</span>
+                            <span class="ml-2 text-sm font-medium text-green-600">▲ 64%</span>
+                        </div>
+                        <p class="mt-1 text-xs text-gray-500">Verified GSC Data</p>
+                    </div>
+                    <div class="p-6 bg-white rounded-xl shadow-sm border-l-4 border-green-600">
+                        <h3 class="text-gray-500 text-sm font-semibold uppercase tracking-wider">Avg. Conversion Rate</h3>
+                        <div class="mt-2 flex items-baseline">
+                            <span class="text-4xl font-extrabold text-gray-900">4.8%</span>
+                            <span class="ml-2 text-sm font-medium text-green-600">▲ 1.2%</span>
+                        </div>
+                        <p class="mt-1 text-xs text-gray-500">Goal: Calls, Directions, Orders</p>
+                    </div>
+                </div>
+
+                <!-- Total Clicks Chart -->
+                <div class="bg-white p-6 rounded-xl shadow-sm mb-8">
+                    <h3 class="text-xl font-bold text-gray-800 mb-2">Total Clicks Over Time (Google Search)</h3>
+                    <p class="text-sm text-gray-500 mb-6">The raw number of users who clicked your listing on Google Search and Maps.</p>
+                    <div class="chart-container">
+                        <canvas id="totalClicksChart"></canvas>
+                    </div>
+                </div>
+
+                <!-- Conversion Rate Chart -->
+                <div class="bg-white p-6 rounded-xl shadow-sm mb-8">
+                    <h3 class="text-xl font-bold text-gray-800 mb-2">User Conversion Rate Trend</h3>
+                    <p class="text-sm text-gray-500 mb-6">Percentage of visitors who completed a key action (Call, Direction, Menu View) after visiting.</p>
+                    <div class="chart-container">
+                        <canvas id="conversionRateChart"></canvas>
+                    </div>
+                </div>
+                
+                 <!-- Business Impact Note -->
+                 <div class="bg-green-50 rounded-xl p-6 border border-green-100">
+                    <h4 class="font-bold text-green-900 mb-2">💡 Business Impact Analysis</h4>
+                    <p class="text-sm text-green-800">
+                        The increase in <strong>Conversion Rate</strong> from 3.6% to 4.8% in Q4 correlates directly with the "Lunch Special" page optimization. This 1.2% lift generated an estimated <strong>450 additional covers</strong> in Q4 alone.
+                    </p>
+                </div>
+            </section>
+
+            <!-- View: Rankings & Keywords -->
+            <section id="view-rankings" class="view-section hidden animate-fade-in">
+                <div class="mb-8">
+                    <h2 class="text-3xl font-bold text-orange-900 mb-2">Keyword Rankings & Performance</h2>
+                    <p class="text-gray-700">Tracking <strong>transactional intent</strong> and how often users click through to your menu.</p>
+                </div>
+
+                <!-- CTR Section -->
+                <div class="bg-white p-6 rounded-xl shadow-sm mb-8 border border-orange-100">
+                    <div class="flex justify-between items-center mb-4">
+                        <div>
+                            <h3 class="text-xl font-bold text-gray-800">Click-Through Rate (CTR) Improvement</h3>
+                            <p class="text-sm text-gray-500">As rankings improved, the percentage of people clicking your link increased.</p>
+                        </div>
+                        <div class="bg-green-100 text-green-800 px-3 py-1 rounded-full text-sm font-semibold">
+                            Avg CTR: 3.2%
+                        </div>
+                    </div>
+                    <div class="chart-container">
+                        <canvas id="ctrChart"></canvas>
+                    </div>
+                </div>
+
+                <!-- Interactive Filter -->
+                <div class="bg-white p-4 rounded-lg shadow-sm mb-6 flex flex-col sm:flex-row justify-between items-center gap-4">
+                    <input type="text" id="keywordSearch" placeholder="🔍 Search keyword..." class="w-full sm:w-64 px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-orange-500">
+                    <div class="flex space-x-2">
+                        <button class="filter-btn active px-4 py-2 rounded-lg bg-orange-100 text-orange-800 font-medium text-sm hover:bg-orange-200" data-filter="all">All</button>
+                        <button class="filter-btn px-4 py-2 rounded-lg bg-gray-100 text-gray-600 font-medium text-sm hover:bg-gray-200" data-filter="top3">Top 3</button>
+                        <button class="filter-btn px-4 py-2 rounded-lg bg-gray-100 text-gray-600 font-medium text-sm hover:bg-gray-200" data-filter="improved">Improved</button>
+                    </div>
+                </div>
+
+                <div class="bg-white rounded-xl shadow-sm overflow-hidden">
+                    <div class="overflow-x-auto">
+                        <table class="min-w-full divide-y divide-gray-200">
+                            <thead class="bg-orange-50">
+                                <tr>
+                                    <th class="px-6 py-3 text-left text-xs font-bold text-orange-800 uppercase tracking-wider">Keyword</th>
+                                    <th class="px-6 py-3 text-left text-xs font-bold text-orange-800 uppercase tracking-wider">Current Rank</th>
+                                    <th class="px-6 py-3 text-left text-xs font-bold text-orange-800 uppercase tracking-wider">Change (12mo)</th>
+                                    <th class="px-6 py-3 text-left text-xs font-bold text-orange-800 uppercase tracking-wider">Volume</th>
+                                    <th class="px-6 py-3 text-left text-xs font-bold text-orange-800 uppercase tracking-wider">Intent</th>
+                                </tr>
+                            </thead>
+                            <tbody id="keywordTableBody" class="bg-white divide-y divide-gray-200">
+                                <!-- Populated by JS -->
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </section>
+
+            <!-- View: Technical & Strategy -->
+            <section id="view-tech" class="view-section hidden animate-fade-in">
+                <div class="mb-8">
+                    <h2 class="text-3xl font-bold text-orange-900 mb-2">Technical Health & Strategy</h2>
+                    <p class="text-gray-700">A website can't rank if it's broken. Here is the summary of the technical foundation work and content strategy executed this year.</p>
+                </div>
+
+                <div class="grid grid-cols-1 lg:grid-cols-2 gap-8 mb-8">
+                    <!-- Site Health -->
+                    <div class="bg-white p-6 rounded-xl shadow-sm">
+                        <h3 class="text-lg font-bold text-gray-800 mb-4">Site Health Score</h3>
+                        <div class="flex items-center justify-center mb-6">
+                            <div class="relative w-40 h-40">
+                                <!-- Simple CSS Gauge -->
+                                <div class="w-full h-full rounded-full border-8 border-gray-100"></div>
+                                <div class="absolute top-0 left-0 w-full h-full rounded-full border-8 border-green-500 border-t-transparent border-l-transparent transform -rotate-45"></div>
+                                <div class="absolute inset-0 flex items-center justify-center flex-col">
+                                    <span class="text-4xl font-bold text-gray-800">92%</span>
+                                    <span class="text-xs text-gray-500">Excellent</span>
+                                </div>
+                            </div>
+                        </div>
+                        <ul class="space-y-3 text-sm text-gray-700">
+                            <li class="flex items-center"><span class="mr-2 text-green-500">✓</span> Optimized Page Speed (Mobile Load < 2.5s)</li>
+                            <li class="flex items-center"><span class="mr-2 text-green-500">✓</span> Fixed 14 Broken Links (404s)</li>
+                            <li class="flex items-center"><span class="mr-2 text-green-500">✓</span> Implemented Schema Markup (Restaurant, Menu)</li>
+                        </ul>
+                    </div>
+
+                    <!-- Content Wins -->
+                    <div class="bg-white p-6 rounded-xl shadow-sm">
+                        <h3 class="text-lg font-bold text-gray-800 mb-4">Top Performing Content</h3>
+                        <div class="space-y-4">
+                            <div class="p-4 bg-orange-50 rounded-lg border border-orange-100">
+                                <div class="flex justify-between">
+                                    <span class="font-bold text-orange-900">Blog: "Best Burger Toppings 2024"</span>
+                                    <span class="text-orange-600 text-sm">1,200 Visits</span>
+                                </div>
+                                <p class="text-xs text-gray-600 mt-1">Generated 45 menu clicks.</p>
+                            </div>
+                            <div class="p-4 bg-orange-50 rounded-lg border border-orange-100">
+                                <div class="flex justify-between">
+                                    <span class="font-bold text-orange-900">Page: "Our Locally Sourced Beef"</span>
+                                    <span class="text-orange-600 text-sm">850 Visits</span>
+                                </div>
+                                <p class="text-xs text-gray-600 mt-1">High engagement time (3m 20s).</p>
+                            </div>
+                             <div class="p-4 bg-orange-50 rounded-lg border border-orange-100">
+                                <div class="flex justify-between">
+                                    <span class="font-bold text-orange-900">Page: "Catering Services"</span>
+                                    <span class="text-orange-600 text-sm">340 Visits</span>
+                                </div>
+                                <p class="text-xs text-gray-600 mt-1">Primary lead generator.</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Strategic Recommendations -->
+                <div class="bg-blue-50 border border-blue-100 rounded-xl p-8">
+                    <h3 class="text-2xl font-bold text-blue-900 mb-2">🚀 Strategic Recommendations for Management</h3>
+                    <p class="text-blue-800 mb-6">Actionable steps for the Boss Drive In team to accelerate growth and improve SEO signals.</p>
+                    
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                        <!-- Recommendation 1: Owner Reviews -->
+                        <div class="bg-white p-5 rounded-lg shadow-sm border-l-4 border-orange-500">
+                            <div class="flex items-start">
+                                <span class="text-2xl mr-3">🧐</span>
+                                <div>
+                                    <h4 class="font-bold text-gray-800">Personal Review Oversight</h4>
+                                    <p class="text-sm text-gray-600 mt-2">
+                                        While our team handles review replies, we strongly recommend the management team personally <strong>reads incoming reviews weekly</strong>. This direct feedback loop is crucial for understanding operational strengths and areas for "work management" improvement that only you can fix.
+                                    </p>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Recommendation 2: Events -->
+                        <div class="bg-white p-5 rounded-lg shadow-sm border-l-4 border-green-500">
+                            <div class="flex items-start">
+                                <span class="text-2xl mr-3">🎉</span>
+                                <div>
+                                    <h4 class="font-bold text-gray-800">Host Micro-Events</h4>
+                                    <p class="text-sm text-gray-600 mt-2">
+                                        Start hosting small in-restaurant events (e.g., "Friday Fry Tastings" or "Local Hero Appreciation"). These events drive immediate foot traffic and, more importantly for SEO, generate <strong>local buzz, social check-ins, and photo uploads</strong> that signal relevance to Google.
+                                    </p>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Recommendation 3: Visual Updates -->
+                        <div class="bg-white p-5 rounded-lg shadow-sm border-l-4 border-purple-500">
+                            <div class="flex items-start">
+                                <span class="text-2xl mr-3">📸</span>
+                                <div>
+                                    <h4 class="font-bold text-gray-800">Fresh Food Photography</h4>
+                                    <p class="text-sm text-gray-600 mt-2">
+                                        Google Maps favors listings with fresh content. We recommend a monthly cadence of taking <strong>high-quality, well-lit photos</strong> of your specials and uploading them directly to your Business Profile to keep the feed active.
+                                    </p>
+                                </div>
+                            </div>
+                        </div>
+
+                         <!-- Recommendation 4: Social Proof -->
+                         <div class="bg-white p-5 rounded-lg shadow-sm border-l-4 border-blue-500">
+                            <div class="flex items-start">
+                                <span class="text-2xl mr-3">🤳</span>
+                                <div>
+                                    <h4 class="font-bold text-gray-800">Encourage Social Tagging</h4>
+                                    <p class="text-sm text-gray-600 mt-2">
+                                        Create a small sign or table tent encouraging customers to "Tag us @BossDriveIn". User-Generated Content (UGC) acts as powerful social proof and creates digital backlinks to your profiles.
+                                    </p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+        </main>
+
+        <footer class="bg-white border-t border-gray-200 mt-auto py-8">
+            <div class="max-w-7xl mx-auto px-4 text-center">
+                <p class="text-gray-500 text-sm">Annual SEO Report Generated for Boss Drive In</p>
+                <p class="text-gray-400 text-xs mt-2">© 2025 Digital SEO Services</p>
+            </div>
+        </footer>
+    </div>
+
+    <script>
+        // --- Data Definitions ---
+        const navItems = [
+            { id: 'view-summary', label: '📊 Overview' },
+            { id: 'view-local', label: '📍 Local SEO' },
+            { id: 'view-conversions', label: '💰 Conversions' },
+            { id: 'view-rankings', label: '🏆 Rankings' },
+            { id: 'view-tech', label: '🛠️ Technical' }
+        ];
+
+        // Mock Keyword Data
+        const keywords = [
+            { term: 'best burgers washington dc', rank: 3, change: 8, vol: 1200, intent: 'Transactional' },
+            { term: 'boss drive in', rank: 1, change: 0, vol: 5400, intent: 'Branded' },
+            { term: 'lunch spots near me', rank: 5, change: 12, vol: 800, intent: 'Informational' },
+            { term: 'best fries in town', rank: 2, change: 0, vol: 320, intent: 'Transactional' },
+            { term: 'family dinner places dc', rank: 8, change: 15, vol: 1600, intent: 'Commercial' },
+            { term: 'late night food washington', rank: 4, change: 6, vol: 900, intent: 'Transactional' },
+            { term: 'gourmet burger menu', rank: 6, change: 3, vol: 450, intent: 'Commercial' },
+            { term: 'vegan burger options', rank: 9, change: 10, vol: 600, intent: 'Informational' },
+            { term: 'burger delivery', rank: 12, change: 2, vol: 2100, intent: 'Transactional' },
+            { term: 'kids eat free places', rank: 15, change: 5, vol: 1100, intent: 'Commercial' }
+        ];
+
+        // Geo Grid Data (5x5 = 25 points)
+        const geoData = {
+            'burgers': [
+                4, 3, 2, 3, 4,
+                3, 2, 1, 2, 3,
+                2, 1, 1, 1, 2,
+                3, 2, 1, 2, 3,
+                5, 4, 3, 4, 6
+            ],
+            'lunch': [
+                8, 6, 5, 6, 9,
+                6, 4, 3, 4, 7,
+                5, 3, 2, 2, 4,
+                7, 5, 3, 4, 6,
+                9, 7, 5, 8, 11
+            ],
+            'takeout': [
+                2, 2, 1, 2, 2,
+                1, 1, 1, 1, 1,
+                1, 1, 1, 1, 1,
+                2, 1, 1, 1, 2,
+                3, 2, 1, 2, 4
+            ]
+        };
+
+        // --- Core Application Logic ---
+
+        document.addEventListener('DOMContentLoaded', () => {
+            // Only setup Login listener initially. 
+            // Charts will be inited AFTER login to ensure correct sizing in hidden div.
+        });
+
+        function handleLogin(e) {
+            e.preventDefault();
+            const user = document.getElementById('username').value;
+            const pass = document.getElementById('password').value;
+            const errorMsg = document.getElementById('loginError');
+            const loading = document.getElementById('loadingOverlay');
+            const loadingText = document.getElementById('loadingText');
+            const loginContainer = document.getElementById('login-container');
+            const dashboardContainer = document.getElementById('dashboard-container');
+
+            // Simple "Admin" Check
+            if (user.toLowerCase() === 'admin' && pass.toLowerCase() === 'boss') {
+                // Success
+                errorMsg.classList.add('hidden');
+                loading.classList.remove('hidden');
+
+                // Simulation Steps
+                setTimeout(() => { loadingText.innerText = 'Connecting to Search Console...'; }, 800);
+                setTimeout(() => { loadingText.innerText = 'Analyzing Keyword Rankings...'; }, 1800);
+                setTimeout(() => { loadingText.innerText = 'Loading Report Data...'; }, 2800);
+                
+                setTimeout(() => {
+                    // Transition
+                    loginContainer.classList.add('fade-out');
+                    setTimeout(() => {
+                        loginContainer.style.display = 'none';
+                        dashboardContainer.classList.remove('hidden');
+                        
+                        // INITIALIZE DASHBOARD NOW
+                        initNavigation();
+                        initCharts(); // Charts render now that container is visible
+                        renderKeywords(keywords);
+                        initKeywordFilter();
+                        updateGeoGrid('burgers');
+                        
+                        // Scroll to top
+                        window.scrollTo(0, 0);
+                    }, 500);
+                }, 3500);
+
+            } else {
+                // Fail
+                errorMsg.classList.remove('hidden');
+                // Shake animation
+                const form = document.getElementById('loginForm');
+                form.classList.add('translate-x-1');
+                setTimeout(() => form.classList.remove('translate-x-1'), 100);
+            }
+        }
+
+
+        // --- Dashboard Functions ---
+
+        function initNavigation() {
+            const desktopNav = document.getElementById('desktop-nav');
+            const mobileMenu = document.getElementById('mobile-menu');
+            const mobileBtn = document.getElementById('mobile-menu-btn');
+
+            // Render Nav Items
+            navItems.forEach((item, index) => {
+                // Desktop
+                const btn = document.createElement('button');
+                btn.className = `nav-item px-3 py-2 rounded-md text-sm font-medium ${index === 0 ? 'active' : 'text-gray-700 hover:text-orange-600 hover:bg-orange-50'}`;
+                btn.innerText = item.label;
+                btn.onclick = () => switchView(item.id, btn);
+                desktopNav.appendChild(btn);
+
+                // Mobile
+                const mBtn = document.createElement('button');
+                mBtn.className = `block w-full text-left px-3 py-2 rounded-md text-base font-medium ${index === 0 ? 'bg-orange-100 text-orange-900' : 'text-gray-700 hover:bg-orange-50'}`;
+                mBtn.innerText = item.label;
+                mBtn.onclick = () => {
+                    switchView(item.id, null); 
+                    mobileMenu.classList.add('hidden');
+                };
+                mobileMenu.appendChild(mBtn);
+            });
+
+            // Mobile Toggle
+            mobileBtn.addEventListener('click', () => {
+                mobileMenu.classList.toggle('hidden');
+            });
+        }
+
+        function switchView(viewId, activeBtn) {
+            // Hide all sections
+            document.querySelectorAll('.view-section').forEach(el => {
+                el.classList.add('hidden');
+            });
+            // Show selected
+            document.getElementById(viewId).classList.remove('hidden');
+
+            // Update Desktop Nav State
+            if (activeBtn) {
+                document.querySelectorAll('#desktop-nav .nav-item').forEach(el => {
+                    el.classList.remove('active', 'bg-orange-600', 'text-white');
+                    el.classList.add('text-gray-700', 'hover:text-orange-600', 'hover:bg-orange-50');
+                });
+                activeBtn.classList.remove('text-gray-700', 'hover:text-orange-600', 'hover:bg-orange-50');
+                activeBtn.classList.add('active');
+            }
+        }
+
+        // --- Geo Grid Functions ---
+
+        window.updateGeoGrid = function(keyword) {
+            const container = document.getElementById('geoGridContainer');
+            const data = geoData[keyword];
+            
+            // UI Button State update
+            document.querySelectorAll('.geo-btn').forEach(btn => {
+                if(btn.innerText.toLowerCase().includes(keyword.split("'")[0])) { 
+                    btn.classList.remove('bg-gray-50', 'text-gray-600');
+                    btn.classList.add('bg-orange-600', 'text-white');
+                    const badge = btn.querySelector('span:last-child');
+                    if(badge) { badge.classList.remove('bg-gray-200', 'text-gray-500'); badge.classList.add('bg-white', 'text-orange-600'); }
+                } else {
+                    btn.classList.add('bg-gray-50', 'text-gray-600');
+                    btn.classList.remove('bg-orange-600', 'text-white');
+                    const badge = btn.querySelector('span:last-child');
+                    if(badge) { badge.classList.add('bg-gray-200', 'text-gray-500'); badge.classList.remove('bg-white', 'text-orange-600'); }
+                }
+            });
+
+            container.innerHTML = '';
+            
+            data.forEach((rank, index) => {
+                const wrapper = document.createElement('div');
+                wrapper.className = 'geo-point-wrapper';
+
+                const el = document.createElement('div');
+                el.className = 'geo-point';
+                el.innerText = rank;
+                
+                // Color Logic
+                let colorClass = '';
+                if (rank <= 3) {
+                    colorClass = 'bg-green-500';
+                } else if (rank <= 10) {
+                    colorClass = 'bg-yellow-400 text-gray-800';
+                } else {
+                    colorClass = 'bg-red-400';
+                }
+                el.className += ` ${colorClass}`;
+                
+                // Center Marker
+                if (index === 12) {
+                    el.classList.add('center-point');
+                }
+
+                // Tooltip
+                const tooltip = document.createElement('div');
+                tooltip.className = 'geo-tooltip';
+                
+                const row = Math.floor(index / 5);
+                const col = index % 5;
+                const centerRow = 2; 
+                const centerCol = 2;
+                const dist = Math.sqrt(Math.pow(row - centerRow, 2) + Math.pow(col - centerCol, 2)) * 0.5;
+                const direction = dist === 0 ? "Center" : `${dist.toFixed(1)}mi`;
+
+                tooltip.innerHTML = `
+                    <div class="font-bold border-b pb-1 mb-1 border-gray-100">Rank #${rank}</div>
+                    <div class="text-xs text-gray-500">${direction} from Business</div>
+                `;
+
+                wrapper.appendChild(el);
+                wrapper.appendChild(tooltip);
+                container.appendChild(wrapper);
+            });
+        }
+
+        // --- Chart Generation ---
+
+        function initCharts() {
+            // 1. Traffic Chart
+            const ctxTraffic = document.getElementById('trafficChart').getContext('2d');
+            new Chart(ctxTraffic, {
+                type: 'line',
+                data: {
+                    labels: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'],
+                    datasets: [{
+                        label: 'Organic Sessions',
+                        data: [800, 850, 920, 1100, 1250, 1400, 1600, 1550, 1400, 1300, 1100, 1232],
+                        borderColor: '#EA580C',
+                        backgroundColor: 'rgba(234, 88, 12, 0.1)',
+                        fill: true,
+                        tension: 0.4
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        legend: { position: 'top' },
+                        tooltip: { mode: 'index', intersect: false }
+                    },
+                    scales: {
+                        y: { beginAtZero: true, grid: { color: '#f3f4f6' } },
+                        x: { grid: { display: false } }
+                    }
+                }
+            });
+
+            // 2. Local Actions Chart
+            const ctxLocal = document.getElementById('localActionsChart').getContext('2d');
+            new Chart(ctxLocal, {
+                type: 'bar',
+                data: {
+                    labels: ['Q1', 'Q2', 'Q3', 'Q4'],
+                    datasets: [
+                        {
+                            label: 'Direction Requests',
+                            data: [650, 800, 950, 840],
+                            backgroundColor: '#F97316'
+                        },
+                        {
+                            label: 'Phone Calls',
+                            data: [400, 480, 560, 452],
+                            backgroundColor: '#FDBA74'
+                        }
+                    ]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    scales: {
+                        y: { beginAtZero: true },
+                        x: { grid: { display: false } }
+                    }
+                }
+            });
+
+            // 3. Discovery Chart
+            const ctxDiscovery = document.getElementById('discoveryChart').getContext('2d');
+            new Chart(ctxDiscovery, {
+                type: 'doughnut',
+                data: {
+                    labels: ['Discovery (Generic Terms)', 'Direct (Business Name)', 'Branded (Menu items)'],
+                    datasets: [{
+                        data: [65, 25, 10],
+                        backgroundColor: ['#EA580C', '#FB923C', '#FED7AA']
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                }
+            });
+
+            // 4. CTR Chart
+            const ctxCTR = document.getElementById('ctrChart').getContext('2d');
+            new Chart(ctxCTR, {
+                type: 'line',
+                data: {
+                    labels: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'],
+                    datasets: [{
+                        label: 'Average Click-Through Rate (%)',
+                        data: [1.8, 1.9, 2.1, 2.2, 2.4, 2.6, 2.9, 3.0, 3.1, 3.2, 3.1, 3.2],
+                        borderColor: '#16A34A', // Green-600
+                        backgroundColor: 'rgba(22, 163, 74, 0.1)',
+                        borderWidth: 3,
+                        pointBackgroundColor: '#fff',
+                        pointBorderColor: '#16A34A',
+                        fill: true,
+                        tension: 0.3
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        legend: { display: false },
+                        tooltip: { 
+                            callbacks: {
+                                label: function(context) {
+                                    return context.parsed.y + '% CTR';
+                                }
+                            }
+                        }
+                    },
+                    scales: {
+                        y: { 
+                            beginAtZero: false, 
+                            min: 1,
+                            grid: { borderDash: [5, 5] },
+                            ticks: { callback: function(value) { return value + '%' } }
+                        },
+                        x: { grid: { display: false } }
+                    }
+                }
+            });
+
+            // 5. Total Clicks Chart
+            const ctxClicks = document.getElementById('totalClicksChart').getContext('2d');
+            new Chart(ctxClicks, {
+                type: 'bar',
+                data: {
+                    labels: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'],
+                    datasets: [{
+                        label: 'Total Clicks (Google)',
+                        data: [2500, 2650, 2900, 3100, 3400, 3800, 4100, 4000, 3850, 3950, 4050, 4290],
+                        backgroundColor: '#F97316', // Orange-500
+                        borderRadius: 4
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        legend: { display: false }
+                    },
+                    scales: {
+                        y: { beginAtZero: true, grid: { color: '#f3f4f6' } },
+                        x: { grid: { display: false } }
+                    }
+                }
+            });
+
+            // 6. Conversion Rate Chart
+            const ctxConv = document.getElementById('conversionRateChart').getContext('2d');
+            new Chart(ctxConv, {
+                type: 'line',
+                data: {
+                    labels: ['Q1', 'Q2', 'Q3', 'Q4'],
+                    datasets: [{
+                        label: 'User Conversion Rate',
+                        data: [3.2, 3.8, 4.1, 4.8],
+                        borderColor: '#15803d', // Green-700
+                        backgroundColor: 'rgba(21, 128, 61, 0.1)',
+                        fill: true,
+                        tension: 0.2,
+                        borderWidth: 3
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        legend: { display: false },
+                        tooltip: { 
+                            callbacks: {
+                                label: function(context) {
+                                    return context.parsed.y + '% Converted';
+                                }
+                            }
+                        }
+                    },
+                    scales: {
+                        y: { 
+                            beginAtZero: false, 
+                            min: 2,
+                            max: 6,
+                            grid: { borderDash: [5, 5] },
+                            ticks: { callback: function(value) { return value + '%' } }
+                        },
+                        x: { grid: { display: false } }
+                    }
+                }
+            });
+        }
+
+        // --- Keyword Table Logic ---
+
+        function renderKeywords(data) {
+            const tbody = document.getElementById('keywordTableBody');
+            tbody.innerHTML = '';
+            
+            data.forEach(item => {
+                const tr = document.createElement('tr');
+                const changeColor = item.change > 0 ? 'text-green-600' : (item.change < 0 ? 'text-red-600' : 'text-gray-500');
+                const changeIcon = item.change > 0 ? '▲' : (item.change < 0 ? '▼' : '-');
+                const changeText = item.change !== 0 ? Math.abs(item.change) : '-';
+
+                tr.innerHTML = `
+                    <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">${item.term}</td>
+                    <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500 font-bold">#${item.rank}</td>
+                    <td class="px-6 py-4 whitespace-nowrap text-sm ${changeColor}">${changeIcon} ${changeText}</td>
+                    <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">${item.vol}</td>
+                    <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                        <span class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-orange-100 text-orange-800">${item.intent}</span>
+                    </td>
+                `;
+                tbody.appendChild(tr);
+            });
+        }
+
+        function initKeywordFilter() {
+            const searchInput = document.getElementById('keywordSearch');
+            const filterBtns = document.querySelectorAll('.filter-btn');
+
+            let currentFilter = 'all';
+            let currentSearch = '';
+
+            // Search Listener
+            searchInput.addEventListener('input', (e) => {
+                currentSearch = e.target.value.toLowerCase();
+                filterAndRender();
+            });
+
+            // Button Listeners
+            filterBtns.forEach(btn => {
+                btn.addEventListener('click', () => {
+                    // Visual update
+                    filterBtns.forEach(b => {
+                        b.classList.remove('active', 'bg-orange-100', 'text-orange-800');
+                        b.classList.add('bg-gray-100', 'text-gray-600');
+                    });
+                    btn.classList.remove('bg-gray-100', 'text-gray-600');
+                    btn.classList.add('active', 'bg-orange-100', 'text-orange-800');
+
+                    currentFilter = btn.dataset.filter;
+                    filterAndRender();
+                });
+            });
+
+            function filterAndRender() {
+                const filtered = keywords.filter(k => {
+                    // Text Match
+                    const matchesText = k.term.toLowerCase().includes(currentSearch);
+                    
+                    // Category Match
+                    let matchesCategory = true;
+                    if (currentFilter === 'top3') matchesCategory = k.rank <= 3;
+                    if (currentFilter === 'improved') matchesCategory = k.change > 0;
+
+                    return matchesText && matchesCategory;
+                });
+                renderKeywords(filtered);
+            }
+        }
+
+    </script>
+</body>
+</html>
