@@ -1,13 +1,15 @@
 
 import { createContext, useContext, useState, useEffect } from 'react';
+import { useAuth } from './AuthContext';
 import { db } from '../firebase';
-import { collection, onSnapshot, addDoc, deleteDoc, updateDoc, doc } from 'firebase/firestore';
+import { collection, onSnapshot, addDoc, deleteDoc, updateDoc, doc, query, where } from 'firebase/firestore';
 import * as initialData from '../data/mockData';
 
 const DataContext = createContext(null);
 
 export const DataProvider = ({ children }) => {
     const [clients, setClients] = useState([]);
+    const { user, loading: authLoading } = useAuth();
     const [activeClientId, setActiveClientId] = useState(localStorage.getItem('seo_portal_active_client') || null);
     const [loading, setLoading] = useState(true);
 
@@ -19,33 +21,69 @@ export const DataProvider = ({ children }) => {
     });
 
     useEffect(() => {
+        if (authLoading) return;
+
         setLoading(true);
-        // Real-time listener for the 'clients' collection
-        const unsubscribe = onSnapshot(collection(db, 'clients'), (snapshot) => {
-            const clientList = snapshot.docs.map(doc => ({
-                id: doc.id,
-                ...doc.data()
-            }));
+        let unsubscribe = () => { };
 
-            setClients(clientList);
-            setLoading(false);
+        // Role-based subscription
+        // Role-based subscription
+        if (user?.role === 'client' && user?.email) {
+            // Client: Fetch by EMAIL because Auth UID might not match Client Doc ID
+            const q = query(collection(db, 'clients'), where('email', '==', user.email));
 
-            // Data Integrity Check:
-            // If the currently selected client ID no longer exists in the new list (e.g. was deleted),
-            // we must reset the selection to avoid UI errors.
+            unsubscribe = onSnapshot(q, (snapshot) => {
+                if (!snapshot.empty) {
+                    const clientDoc = snapshot.docs[0];
+                    const clientData = { id: clientDoc.id, ...clientDoc.data() };
+
+                    setClients([clientData]);
+                    setActiveClientId(clientDoc.id);
+                    // Also ensure localStorage is set so it persists on reload if needed (though we mostly rely on Auth here)
+                    localStorage.setItem('seo_portal_active_client', clientDoc.id);
+                } else {
+                    console.warn("Client logged in but no matching client document found for email:", user.email);
+                    setClients([]);
+                    setActiveClientId(null);
+                }
+                setLoading(false);
+            }, (error) => {
+                console.error("Error fetching client profile:", error);
+                setLoading(false);
+            });
+
+        } else {
+            // Admin or unauthenticated: Fetch ALL clients
+            // Maintain 'active' state from localStorage if it exists
             const storedActiveId = localStorage.getItem('seo_portal_active_client');
-            if (storedActiveId && !clientList.find(c => c.id === storedActiveId)) {
-                setActiveClientId(null);
-                localStorage.removeItem('seo_portal_active_client');
+            if (storedActiveId) {
+                setActiveClientId(storedActiveId);
             }
 
-        }, (error) => {
-            console.error("Error fetching clients: ", error);
-            setLoading(false);
-        });
+            unsubscribe = onSnapshot(collection(db, 'clients'), (snapshot) => {
+                const clientList = snapshot.docs.map(doc => ({
+                    id: doc.id,
+                    ...doc.data()
+                }));
+
+                setClients(clientList);
+                setLoading(false);
+
+                // Data Integrity Check
+                const currentStoredId = localStorage.getItem('seo_portal_active_client');
+                if (currentStoredId && !clientList.find(c => c.id === currentStoredId)) {
+                    setActiveClientId(null);
+                    localStorage.removeItem('seo_portal_active_client');
+                }
+
+            }, (error) => {
+                console.error("Error fetching clients: ", error);
+                setLoading(false);
+            });
+        }
 
         return () => unsubscribe();
-    }, []);
+    }, [user, authLoading]);
 
     const addClient = async (name, email) => {
         try {

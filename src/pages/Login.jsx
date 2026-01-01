@@ -1,5 +1,5 @@
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
 import { ArrowRight, Lock } from 'lucide-react';
@@ -10,9 +10,17 @@ const Login = () => {
     const [password, setPassword] = useState('');
     const [error, setError] = useState('');
     const [isAuthenticating, setIsAuthenticating] = useState(false);
-    const { login } = useAuth();
+    const { login, user } = useAuth();
     const navigate = useNavigate();
     const location = useLocation();
+
+    // Redirect when user is authenticated
+    useEffect(() => {
+        if (user) {
+            const origin = location.state?.from?.pathname || '/dashboard/overview';
+            navigate(origin, { replace: true });
+        }
+    }, [user, navigate, location]);
 
     const from = location.state?.from?.pathname || '/dashboard/overview';
 
@@ -28,7 +36,7 @@ const Login = () => {
             // but basically we just want to go to the dashboard/admin logic.
             // The context might take a split second to update 'user', 
             // but if await login() succeeds, we are authed.
-            navigate(from, { replace: true });
+            // navigate(from, { replace: true }); // Removed to let useEffect handle it
         } catch (err) {
             console.error(err);
             setError('Invalid credentials. Try admin / boss');

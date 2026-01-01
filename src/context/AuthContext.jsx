@@ -3,14 +3,14 @@ import { createContext, useState, useContext, useEffect } from 'react';
 import { auth, db } from '../firebase';
 import { signInWithEmailAndPassword, signOut, onAuthStateChanged } from 'firebase/auth';
 import { doc, getDoc } from 'firebase/firestore';
-import { useData } from './DataContext';
+
 
 const AuthContext = createContext(null);
 
 export const AuthProvider = ({ children }) => {
     const [user, setUser] = useState(null);
     const [loading, setLoading] = useState(true);
-    const { selectClient } = useData();
+
 
     useEffect(() => {
         // Firebase Auth Listener
@@ -34,10 +34,7 @@ export const AuthProvider = ({ children }) => {
 
                         setUser(appUser);
 
-                        // If client, auto-select their context
-                        if (appUser.role === 'client' && appUser.clientId) {
-                            selectClient(appUser.clientId);
-                        }
+
                     } else {
                         console.warn("User authenticated but no profile found in Firestore 'users' collection.");
                         setUser(null);
@@ -53,7 +50,7 @@ export const AuthProvider = ({ children }) => {
         });
 
         return () => unsubscribe();
-    }, [selectClient]);
+    }, []);
 
     const login = async (email, password) => {
         await signInWithEmailAndPassword(auth, email, password);
